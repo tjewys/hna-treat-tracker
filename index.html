@@ -6,7 +6,7 @@
   <title>Highlands HNA Treat Tracker</title>
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
-  <!-- Google Fonts -->
+  <!-- Google Fonts: Inter and Fredoka -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -335,9 +335,13 @@
   </div>
 
   <script>
-    // Live Google Apps Script Endpoint
+    // Live Google Apps Script Web App Endpoint
     const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzQB4jWPKUWhRFdARRYcu-fVAxheCcysrVObc5PyuiVKZPFqrfQYau_L_T7vg2g6FaF/exec';
-    const STORAGE_KEY = 'neighborhood_halloween_treat_tracker_data_v1';
+    
+    // Purge old cached data from previous browser sessions
+    try {
+      localStorage.removeItem('neighborhood_halloween_treat_tracker_data_v1');
+    } catch (e) {}
 
     let houseRecords = [];
     let activeFilter = 'all';
@@ -347,23 +351,19 @@
       try {
         const res = await fetch(SCRIPT_URL);
         const json = await res.json();
-        if (json.status === 'success' && Array.isArray(json.data) && json.data.length > 0) {
+        if (json.status === 'success' && Array.isArray(json.data)) {
+          // Exactly mirrors the spreadsheet rows (newest entries first)
           houseRecords = json.data.reverse();
-          localStorage.setItem(STORAGE_KEY, JSON.stringify(houseRecords));
         } else {
-          loadFallbackData();
+          houseRecords = [];
         }
       } catch (err) {
-        console.warn("Could not fetch remote sheet data, falling back to local:", err);
-        loadFallbackData();
+        console.warn("Could not fetch sheet data:", err);
+        houseRecords = [];
+        showToast("Unable to reach Google Sheet", "⚠️", "bg-amber-900 border-amber-600 text-amber-200");
       }
       renderDirectory();
       updateStats();
-    }
-
-    function loadFallbackData() {
-      const stored = localStorage.getItem(STORAGE_KEY);
-      houseRecords = stored ? JSON.parse(stored) : [];
     }
 
     async function handleFormSubmit() {
@@ -404,19 +404,18 @@
         timestamp: Date.now()
       };
 
-      // 1. Optimistically display on the page
+      // Optimistically display immediately in the UI
       houseRecords.unshift(newRecord);
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(houseRecords));
       renderDirectory();
       updateStats();
       showToast(`Saving ${addressVal}...`, "⏳");
 
-      // 2. Clear inputs
+      // Reset form fields
       document.getElementById('signupForm').reset();
       document.querySelector('input[name="handingOut"][value="yes"]').checked = true;
       toggleTreatOptions(true);
 
-      // 3. Post to Google Sheet via text/plain to prevent CORS preflight blockage
+      // Post payload directly to Google Apps Script
       try {
         await fetch(SCRIPT_URL, {
           method: 'POST',
@@ -424,10 +423,10 @@
           headers: { 'Content-Type': 'text/plain;charset=utf-8' },
           body: JSON.stringify(newRecord)
         });
-        showToast(`Saved to Google Sheet!`, "✅", "bg-orange-950 border-halloween-orange text-orange-200");
+        showToast(`Saved to neighborhood treat map!`, "✅", "bg-orange-950 border-halloween-orange text-orange-200");
       } catch (err) {
         console.error("Failed to post to Google Apps Script:", err);
-        showToast("Saved locally (offline mode)", "⚠️", "bg-amber-900 border-amber-600 text-amber-200");
+        showToast("Error saving to sheet", "⚠️", "bg-amber-900 border-amber-600 text-amber-200");
       }
     }
 
@@ -547,7 +546,7 @@
 
     function exportToCSV() {
       if (houseRecords.length === 0) {
-        showToast("No records to export!", "⚠️", "bg-amber-900 border-amber-600 text-amber-200");
+        showToast("No records to export!", "⚠️️", "bg-amber-900 border-amber-600 text-amber-200");
         return;
       }
 
@@ -595,6 +594,7 @@
 
       toastText.innerText = message;
       toastIcon.innerText = icon;
+
       toast.className = `fixed bottom-6 right-6 z-50 px-5 py-3 rounded-2xl shadow-2xl border text-sm font-semibold flex items-center gap-3 transition-all duration-300 transform translate-y-0 opacity-100 ${styleClass}`;
       
       if (toastTimer) clearTimeout(toastTimer);
@@ -606,6 +606,7 @@
       toast.classList.remove('hidden');
     }
 
+    // Load data from Google Sheets on startup
     window.addEventListener('DOMContentLoaded', () => {
       initData();
     });
