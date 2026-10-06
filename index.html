@@ -6,13 +6,11 @@
   <title>Highlands HNA Treat Tracker</title>
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
-  <!-- Google Fonts: Inter and Creepster/Fredoka for seasonal flair -->
+  <!-- Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <script>
-  const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzQB4jWPKUWhRFdARRYcu-fVAxheCcysrVObc5PyuiVKZPFqrfQYau_L_T7vg2g6FaF/exec';
-  
     tailwind.config = {
       darkMode: 'class',
       theme: {
@@ -39,7 +37,6 @@
     }
   </script>
   <style>
-    /* Custom subtle ambient Halloween background effects */
     body {
       background: radial-gradient(circle at 50% 0%, #2b1055 0%, #0f0e17 65%);
       min-height: 100vh;
@@ -167,7 +164,7 @@
             >
           </div>
 
-          <!-- Handing Out Candy Choice (Yes/No with visuals) -->
+          <!-- Handing Out Candy Choice -->
           <div>
             <span class="block text-xs font-semibold uppercase tracking-wider text-slate-300 mb-2">
               Will you be handing out candy / treats? <span class="text-halloween-brightOrange">*</span>
@@ -235,7 +232,7 @@
               </div>
             </div>
 
-            <!-- Porch Notes / Instructions -->
+            <!-- Porch Notes -->
             <div>
               <label for="residentNotes" class="block text-xs font-medium text-slate-400 mb-1">
                 Porch Notes / Special Instructions
@@ -252,6 +249,7 @@
           <!-- Submit Button -->
           <button 
             type="submit" 
+            id="submitBtn"
             class="w-full mt-3 py-3 px-6 rounded-2xl bg-gradient-to-r from-halloween-orange to-halloween-brightOrange hover:from-orange-500 hover:to-orange-600 text-white font-fun font-bold text-base tracking-wide shadow-lg shadow-orange-500/30 transform active:scale-95 transition-all flex items-center justify-center gap-2 cursor-pointer"
           >
             <span>🎃</span>
@@ -274,7 +272,6 @@
             </div>
 
             <div class="flex items-center gap-2">
-              <!-- Export CSV Button -->
               <button 
                 onclick="exportToCSV()" 
                 class="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-purple-900/50 hover:bg-purple-800/70 border border-purple-400/30 text-xs font-semibold text-purple-200 transition active:scale-95 cursor-pointer shadow-sm"
@@ -284,7 +281,6 @@
                 <span>Export CSV</span>
               </button>
 
-              <!-- Print / Flyer Friendly Mode -->
               <button 
                 onclick="window.print()" 
                 class="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-600 text-xs font-semibold text-slate-200 transition active:scale-95 cursor-pointer shadow-sm"
@@ -298,11 +294,8 @@
 
           <!-- Search Input & Quick Filters -->
           <div class="grid grid-cols-1 sm:grid-cols-12 gap-3 pt-2">
-            <!-- Search bar -->
             <div class="sm:col-span-6 relative">
-              <span class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-slate-400">
-                🔍
-              </span>
+              <span class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-slate-400">🔍</span>
               <input 
                 type="text" 
                 id="searchAddress" 
@@ -312,44 +305,17 @@
               >
             </div>
 
-            <!-- Filter Buttons -->
             <div class="sm:col-span-6 flex items-center gap-1.5 overflow-x-auto pb-1 sm:pb-0">
-              <button 
-                onclick="setFilter('all')" 
-                id="filterBtn-all" 
-                class="px-2.5 py-1.5 rounded-lg text-xs font-medium bg-halloween-orange text-white whitespace-nowrap transition cursor-pointer"
-              >
-                All
-              </button>
-              <button 
-                onclick="setFilter('candy')" 
-                id="filterBtn-candy" 
-                class="px-2.5 py-1.5 rounded-lg text-xs font-medium bg-slate-800 text-slate-300 hover:text-white whitespace-nowrap transition cursor-pointer"
-              >
-                🍬 Handing Out
-              </button>
-              <button 
-                onclick="setFilter('teal')" 
-                id="filterBtn-teal" 
-                class="px-2.5 py-1.5 rounded-lg text-xs font-medium bg-slate-800 text-slate-300 hover:text-white whitespace-nowrap transition cursor-pointer"
-              >
-                🩵 Teal Pumpkin
-              </button>
-              <button 
-                onclick="setFilter('notHanding')" 
-                id="filterBtn-notHanding" 
-                class="px-2.5 py-1.5 rounded-lg text-xs font-medium bg-slate-800 text-slate-300 hover:text-white whitespace-nowrap transition cursor-pointer"
-              >
-                🌙 Off
-              </button>
+              <button onclick="setFilter('all')" id="filterBtn-all" class="px-2.5 py-1.5 rounded-lg text-xs font-semibold bg-halloween-orange text-white shadow whitespace-nowrap transition cursor-pointer">All</button>
+              <button onclick="setFilter('candy')" id="filterBtn-candy" class="px-2.5 py-1.5 rounded-lg text-xs font-medium bg-slate-800 text-slate-300 hover:text-white whitespace-nowrap transition cursor-pointer">🍬 Handing Out</button>
+              <button onclick="setFilter('teal')" id="filterBtn-teal" class="px-2.5 py-1.5 rounded-lg text-xs font-medium bg-slate-800 text-slate-300 hover:text-white whitespace-nowrap transition cursor-pointer">🩵 Teal Pumpkin</button>
+              <button onclick="setFilter('notHanding')" id="filterBtn-notHanding" class="px-2.5 py-1.5 rounded-lg text-xs font-medium bg-slate-800 text-slate-300 hover:text-white whitespace-nowrap transition cursor-pointer">🌙 Off</button>
             </div>
           </div>
         </div>
 
         <!-- Houses Cards Container -->
-        <div id="housesContainer" class="space-y-3.5 max-h-[680px] overflow-y-auto pr-1 custom-scrollbar">
-          <!-- House cards will be injected dynamically via JavaScript -->
-        </div>
+        <div id="housesContainer" class="space-y-3.5 max-h-[680px] overflow-y-auto pr-1 custom-scrollbar"></div>
 
         <!-- Empty State Message -->
         <div id="emptyState" class="hidden text-center py-12 px-4 rounded-3xl bg-halloween-card/60 border border-dashed border-slate-700">
@@ -362,7 +328,6 @@
 
     </main>
 
-    <!-- Footer Note -->
     <footer class="text-center text-xs text-slate-500 pt-6 border-t border-white/5 pb-8">
       🎃 Trick-or-Treaters: Always travel with adult supervision, stay on sidewalks, and carry flashlights or glow sticks!
     </footer>
@@ -370,138 +335,99 @@
   </div>
 
   <script>
-    // Initial sample seed entries so the tracker is active immediately
-    const INITIAL_SAMPLES = [
-      {
-        id: 'sample-1',
-        name: 'The Campbell Family',
-        address: '104 Whispering Pines Way',
-        handingOut: true,
-        categories: ['Chocolate / Classics', 'Full-Size Bars'],
-        timeStart: '5:30 PM',
-        timeEnd: '8:30 PM',
-        notes: 'Front porch decorated with dancing skeletons! Full size bars for early ghouls.',
-        timestamp: Date.now() - 3600000
-      },
-      {
-        id: 'sample-2',
-        name: 'Elena & Marcus Vance',
-        address: '118 Whispering Pines Way',
-        handingOut: true,
-        categories: ['Teal Pumpkin / Non-Food', 'Peanut & Nut-Free'],
-        timeStart: '6:00 PM',
-        timeEnd: '9:00 PM',
-        notes: 'Look for our glowing Teal Pumpkin! We have glow rings, stickers, and nut-safe pretzels.',
-        timestamp: Date.now() - 7200000
-      },
-      {
-        id: 'sample-3',
-        name: 'The Henderson House',
-        address: '205 Maple Hollow Court',
-        handingOut: false,
-        categories: [],
-        timeStart: '',
-        timeEnd: '',
-        notes: 'Traveling to grandparents for trick-or-treating this evening. Have fun everyone!',
-        timestamp: Date.now() - 10800000
-      }
-    ];
-
-    // Storage Key
+    // Live Google Apps Script Endpoint
+    const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzQB4jWPKUWhRFdARRYcu-fVAxheCcysrVObc5PyuiVKZPFqrfQYau_L_T7vg2g6FaF/exec';
     const STORAGE_KEY = 'neighborhood_halloween_treat_tracker_data_v1';
 
-    // State Variables
     let houseRecords = [];
     let activeFilter = 'all';
 
-	async function initData() {
-	  showToast("Loading neighborhood houses...", "🎃");
-	  try {
-		const res = await fetch(SCRIPT_URL);
-		const json = await res.json();
-		if (json.status === 'success' && json.data.length > 0) {
-		  houseRecords = json.data.reverse(); // newest first
-		} else {
-		  houseRecords = [...INITIAL_SAMPLES];
-		}
-	  } catch (err) {
-		console.warn("Could not load from Google Sheets, using cached/sample data:", err);
-		const stored = localStorage.getItem(STORAGE_KEY);
-		houseRecords = stored ? JSON.parse(stored) : [...INITIAL_SAMPLES];
-	  }
-	  renderDirectory();
-	  updateStats();
-	}
-
-	async function handleFormSubmit() {
-	  const nameInput = document.getElementById('residentName');
-	  const addressInput = document.getElementById('residentAddress');
-	  const handingOutRadios = document.getElementsByName('handingOut');
-	  let isHandingOut = true;
-	  for (const r of handingOutRadios) {
-		if (r.checked) {
-		  isHandingOut = (r.value === 'yes');
-		  break;
-		}
-	  }
-	
-	  const nameVal = nameInput.value.trim();
-	  const addressVal = addressInput.value.trim();
-	
-	  if (!nameVal || !addressVal) {
-		showToast("Please provide both your name and address!", "⚠️", "bg-amber-800 text-amber-200 border-amber-600");
-		return;
-	  }
-	
-	  const categoryBoxes = document.querySelectorAll('input[name="treatCategory"]:checked');
-	  const selectedCategories = Array.from(categoryBoxes).map(cb => cb.value);
-	  const timeStart = document.getElementById('timeStart').value.trim();
-	  const timeEnd = document.getElementById('timeEnd').value.trim();
-	  const notes = document.getElementById('residentNotes').value.trim();
-	
-	  const newRecord = {
-		id: 'house-' + Date.now(),
-		name: nameVal,
-		address: addressVal,
-		handingOut: isHandingOut,
-		categories: isHandingOut ? selectedCategories : [],
-		timeStart: isHandingOut ? timeStart : '',
-		timeEnd: isHandingOut ? timeEnd : '',
-		notes: notes,
-		timestamp: Date.now()
-	  };
-	
-	  // Optimistically display on page immediately
-	  houseRecords.unshift(newRecord);
-	  renderDirectory();
-	  updateStats();
-	  showToast(`Awesome! ${addressVal} added. Saving...`, "🎃");
-	
-	  // Reset form inputs
-	  document.getElementById('signupForm').reset();
-	  document.querySelector('input[name="handingOut"][value="yes"]').checked = true;
-	  toggleTreatOptions(true);
-	
-	  // Send to Google Sheets via Apps Script
-	  try {
-		await fetch(SCRIPT_URL, {
-		  method: 'POST',
-		  mode: 'no-cors', // Google Apps Script requires no-cors from frontend browsers
-		  headers: { 'Content-Type': 'application/json' },
-		  body: JSON.stringify(newRecord)
-		});
-		showToast(`Saved to neighborhood treat map!`, "✅", "bg-orange-950 border-halloween-orange text-orange-200");
-	  } catch (err) {
-		console.error("Failed to save to Google Sheets:", err);
-		saveToLocalStorage(); // fallback backup
-	  }
-	}
-
-    function saveToLocalStorage() {
+    async function initData() {
+      showToast("Syncing with neighborhood map...", "🎃");
       try {
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(houseRecords));
+        const res = await fetch(SCRIPT_URL);
+        const json = await res.json();
+        if (json.status === 'success' && Array.isArray(json.data) && json.data.length > 0) {
+          houseRecords = json.data.reverse();
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(houseRecords));
+        } else {
+          loadFallbackData();
+        }
       } catch (err) {
-        console.error("Could not write to localStorage:", err);
+        console.warn("Could not fetch remote sheet data, falling back to local:", err);
+        loadFallbackData();
+      }
+      renderDirectory();
+      updateStats();
+    }
+
+    function loadFallbackData() {
+      const stored = localStorage.getItem(STORAGE_KEY);
+      houseRecords = stored ? JSON.parse(stored) : [];
+    }
+
+    async function handleFormSubmit() {
+      const nameInput = document.getElementById('residentName');
+      const addressInput = document.getElementById('residentAddress');
+      const handingOutRadios = document.getElementsByName('handingOut');
+      let isHandingOut = true;
+      for (const r of handingOutRadios) {
+        if (r.checked) {
+          isHandingOut = (r.value === 'yes');
+          break;
+        }
+      }
+
+      const nameVal = nameInput.value.trim();
+      const addressVal = addressInput.value.trim();
+
+      if (!nameVal || !addressVal) {
+        showToast("Please provide both your name and address!", "⚠️", "bg-amber-800 text-amber-200 border-amber-600");
+        return;
+      }
+
+      const categoryBoxes = document.querySelectorAll('input[name="treatCategory"]:checked');
+      const selectedCategories = Array.from(categoryBoxes).map(cb => cb.value);
+      const timeStart = document.getElementById('timeStart').value.trim();
+      const timeEnd = document.getElementById('timeEnd').value.trim();
+      const notes = document.getElementById('residentNotes').value.trim();
+
+      const newRecord = {
+        id: 'house-' + Date.now(),
+        name: nameVal,
+        address: addressVal,
+        handingOut: isHandingOut,
+        categories: isHandingOut ? selectedCategories : [],
+        timeStart: isHandingOut ? timeStart : '',
+        timeEnd: isHandingOut ? timeEnd : '',
+        notes: notes,
+        timestamp: Date.now()
+      };
+
+      // 1. Optimistically display on the page
+      houseRecords.unshift(newRecord);
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(houseRecords));
+      renderDirectory();
+      updateStats();
+      showToast(`Saving ${addressVal}...`, "⏳");
+
+      // 2. Clear inputs
+      document.getElementById('signupForm').reset();
+      document.querySelector('input[name="handingOut"][value="yes"]').checked = true;
+      toggleTreatOptions(true);
+
+      // 3. Post to Google Sheet via text/plain to prevent CORS preflight blockage
+      try {
+        await fetch(SCRIPT_URL, {
+          method: 'POST',
+          mode: 'no-cors',
+          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+          body: JSON.stringify(newRecord)
+        });
+        showToast(`Saved to Google Sheet!`, "✅", "bg-orange-950 border-halloween-orange text-orange-200");
+      } catch (err) {
+        console.error("Failed to post to Google Apps Script:", err);
+        showToast("Saved locally (offline mode)", "⚠️", "bg-amber-900 border-amber-600 text-amber-200");
       }
     }
 
@@ -513,7 +439,6 @@
         treatSection.classList.add('opacity-40', 'pointer-events-none');
       }
     }
-
 
     function setFilter(type) {
       activeFilter = type;
@@ -535,9 +460,7 @@
       const emptyState = document.getElementById('emptyState');
       const searchQuery = (document.getElementById('searchAddress').value || '').toLowerCase().trim();
 
-      // Filter logic
       const filtered = houseRecords.filter(item => {
-        // Query match
         const matchesQuery = !searchQuery || 
           item.address.toLowerCase().includes(searchQuery) ||
           item.name.toLowerCase().includes(searchQuery) ||
@@ -545,16 +468,9 @@
 
         if (!matchesQuery) return false;
 
-        // Filter type
-        if (activeFilter === 'candy') {
-          return item.handingOut === true;
-        }
-        if (activeFilter === 'teal') {
-          return item.handingOut === true && item.categories.includes('Teal Pumpkin / Non-Food');
-        }
-        if (activeFilter === 'notHanding') {
-          return item.handingOut === false;
-        }
+        if (activeFilter === 'candy') return item.handingOut === true;
+        if (activeFilter === 'teal') return item.handingOut === true && item.categories.includes('Teal Pumpkin / Non-Food');
+        if (activeFilter === 'notHanding') return item.handingOut === false;
         return true;
       });
 
@@ -570,44 +486,27 @@
         const isTeal = house.categories && house.categories.includes('Teal Pumpkin / Non-Food');
         const isHanding = house.handingOut;
 
-        let badgeHtml = '';
-        if (isHanding) {
-          badgeHtml = `
-            <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-bold bg-halloween-orange/20 border border-halloween-orange/50 text-halloween-orange">
+        let badgeHtml = isHanding
+          ? `<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-bold bg-halloween-orange/20 border border-halloween-orange/50 text-halloween-orange">
               <span>🎃 Handing Out Treats</span>
-            </span>
-          `;
-          if (isTeal) {
-            badgeHtml += `
-              <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-bold bg-halloween-tealPumpkin/20 border border-halloween-tealPumpkin/40 text-halloween-tealPumpkin">
-                <span>🩵 Teal Pumpkin</span>
-              </span>
-            `;
-          }
-        } else {
-          badgeHtml = `
-            <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium bg-slate-800 border border-slate-700 text-slate-400">
+            </span>` + (isTeal ? `
+            <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-bold bg-halloween-tealPumpkin/20 border border-halloween-tealPumpkin/40 text-halloween-tealPumpkin">
+              <span>🩵 Teal Pumpkin</span>
+            </span>` : '')
+          : `<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium bg-slate-800 border border-slate-700 text-slate-400">
               <span>🌙 Porch Resting / Away</span>
-            </span>
-          `;
-        }
+            </span>`;
 
-        // Tags
         const tagsHtml = (house.categories || []).map(cat => {
           let style = "bg-slate-800/80 text-slate-300 border-slate-700";
-          if (cat.includes('Teal')) {
-            style = "bg-teal-950/70 text-halloween-tealPumpkin border-teal-800/60";
-          } else if (cat.includes('Full-Size')) {
-            style = "bg-amber-950/70 text-amber-300 border-amber-800/60";
-          }
+          if (cat.includes('Teal')) style = "bg-teal-950/70 text-halloween-tealPumpkin border-teal-800/60";
+          else if (cat.includes('Full-Size')) style = "bg-amber-950/70 text-amber-300 border-amber-800/60";
           return `<span class="inline-block text-[11px] px-2 py-0.5 rounded-md border ${style}">${cat}</span>`;
         }).join('');
 
-        // Timing string
-        let timeString = '';
-        if (house.timeStart || house.timeEnd) {
-          timeString = `🕒 ${house.timeStart || 'Dusk'} - ${house.timeEnd || 'Until lights out'}`;
-        }
+        let timeString = (house.timeStart || house.timeEnd) 
+          ? `🕒 ${house.timeStart || 'Dusk'} - ${house.timeEnd || 'Until lights out'}`
+          : '';
 
         return `
           <div class="bg-halloween-card/85 rounded-2xl p-4 sm:p-5 border ${isHanding ? 'border-purple-900/50 hover:border-halloween-orange/50' : 'border-slate-800/80 opacity-75'} shadow-md transition-all duration-200">
@@ -615,31 +514,16 @@
               <div>
                 <div class="flex flex-wrap items-center gap-2 mb-1.5">
                   <h3 class="text-base sm:text-lg font-bold text-white font-fun tracking-wide">${escapeHtml(house.address)}</h3>
-                  <div class="flex flex-wrap items-center gap-1.5">
-                    ${badgeHtml}
-                  </div>
+                  <div class="flex flex-wrap items-center gap-1.5">${badgeHtml}</div>
                 </div>
                 <div class="text-xs text-slate-400 font-medium">
                   Family / Resident: <span class="text-slate-200 font-semibold">${escapeHtml(house.name)}</span>
                 </div>
               </div>
-
-              <!-- Quick Action: Delete / Edit helper -->
-              <div class="flex items-center gap-2 self-end sm:self-start">
-                <button 
-                  onclick="deleteEntry('${house.id}')" 
-                  title="Remove entry" 
-                  class="text-slate-500 hover:text-red-400 p-1 rounded-lg hover:bg-slate-800/80 text-xs transition cursor-pointer"
-                >
-                  ✕
-                </button>
-              </div>
             </div>
 
-            <!-- Treat tags and details -->
             ${tagsHtml ? `<div class="flex flex-wrap gap-1.5 mt-3">${tagsHtml}</div>` : ''}
 
-            <!-- Time & Notes -->
             <div class="mt-2.5 pt-2.5 border-t border-slate-800/70 text-xs space-y-1">
               ${timeString ? `<div class="text-halloween-amber font-medium">${timeString}</div>` : ''}
               ${house.notes ? `<div class="text-slate-300 italic bg-black/25 p-2 rounded-xl border border-white/5">"${escapeHtml(house.notes)}"</div>` : ''}
@@ -661,18 +545,6 @@
       document.getElementById('statResting').innerText = resting;
     }
 
-    function deleteEntry(id) {
-      const target = houseRecords.find(h => h.id === id);
-      const name = target ? target.address : 'this house';
-      
-      // Remove without using native alert/confirm popups
-      houseRecords = houseRecords.filter(h => h.id !== id);
-      saveToLocalStorage();
-      renderDirectory();
-      updateStats();
-      showToast(`Removed ${name}`, "🗑️", "bg-slate-900 border-slate-700 text-slate-300");
-    }
-
     function exportToCSV() {
       if (houseRecords.length === 0) {
         showToast("No records to export!", "⚠️", "bg-amber-900 border-amber-600 text-amber-200");
@@ -680,9 +552,7 @@
       }
 
       const headers = ["Resident Name", "Address", "Handing Out Candy", "Treat Categories", "Start Time", "End Time", "Notes"];
-      
-      const csvRows = [];
-      csvRows.push(headers.join(","));
+      const csvRows = [headers.join(",")];
 
       houseRecords.forEach(h => {
         const row = [
@@ -704,7 +574,6 @@
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
-
       showToast("CSV file downloaded!", "📄", "bg-purple-900 border-purple-500 text-white");
     }
 
@@ -726,8 +595,6 @@
 
       toastText.innerText = message;
       toastIcon.innerText = icon;
-
-      // Reset styles
       toast.className = `fixed bottom-6 right-6 z-50 px-5 py-3 rounded-2xl shadow-2xl border text-sm font-semibold flex items-center gap-3 transition-all duration-300 transform translate-y-0 opacity-100 ${styleClass}`;
       
       if (toastTimer) clearTimeout(toastTimer);
@@ -739,7 +606,6 @@
       toast.classList.remove('hidden');
     }
 
-    // Initialize application on page load
     window.addEventListener('DOMContentLoaded', () => {
       initData();
     });
