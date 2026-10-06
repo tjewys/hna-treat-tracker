@@ -11,6 +11,8 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <script>
+  const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzQB4jWPKUWhRFdARRYcu-fVAxheCcysrVObc5PyuiVKZPFqrfQYau_L_T7vg2g6FaF/exec';
+  
     tailwind.config = {
       darkMode: 'class',
       theme: {
@@ -412,22 +414,88 @@
     let houseRecords = [];
     let activeFilter = 'all';
 
-    function initData() {
-      try {
-        const stored = localStorage.getItem(STORAGE_KEY);
-        if (stored) {
-          houseRecords = JSON.parse(stored);
-        } else {
-          houseRecords = [...INITIAL_SAMPLES];
-          saveToLocalStorage();
-        }
-      } catch (err) {
-        console.error("Storage loading error:", err);
-        houseRecords = [...INITIAL_SAMPLES];
-      }
-      renderDirectory();
-      updateStats();
-    }
+	async function initData() {
+	  showToast("Loading neighborhood houses...", "🎃");
+	  try {
+		const res = await fetch(SCRIPT_URL);
+		const json = await res.json();
+		if (json.status === 'success' && json.data.length > 0) {
+		  houseRecords = json.data.reverse(); // newest first
+		} else {
+		  houseRecords = [...INITIAL_SAMPLES];
+		}
+	  } catch (err) {
+		console.warn("Could not load from Google Sheets, using cached/sample data:", err);
+		const stored = localStorage.getItem(STORAGE_KEY);
+		houseRecords = stored ? JSON.parse(stored) : [...INITIAL_SAMPLES];
+	  }
+	  renderDirectory();
+	  updateStats();
+	}
+
+	async function handleFormSubmit() {
+	  const nameInput = document.getElementById('residentName');
+	  const addressInput = document.getElementById('residentAddress');
+	  const handingOutRadios = document.getElementsByName('handingOut');
+	  let isHandingOut = true;
+	  for (const r of handingOutRadios) {
+		if (r.checked) {
+		  isHandingOut = (r.value === 'yes');
+		  break;
+		}
+	  }
+	
+	  const nameVal = nameInput.value.trim();
+	  const addressVal = addressInput.value.trim();
+	
+	  if (!nameVal || !addressVal) {
+		showToast("Please provide both your name and address!", "⚠️", "bg-amber-800 text-amber-200 border-amber-600");
+		return;
+	  }
+	
+	  const categoryBoxes = document.querySelectorAll('input[name="treatCategory"]:checked');
+	  const selectedCategories = Array.from(categoryBoxes).map(cb => cb.value);
+	  const timeStart = document.getElementById('timeStart').value.trim();
+	  const timeEnd = document.getElementById('timeEnd').value.trim();
+	  const notes = document.getElementById('residentNotes').value.trim();
+	
+	  const newRecord = {
+		id: 'house-' + Date.now(),
+		name: nameVal,
+		address: addressVal,
+		handingOut: isHandingOut,
+		categories: isHandingOut ? selectedCategories : [],
+		timeStart: isHandingOut ? timeStart : '',
+		timeEnd: isHandingOut ? timeEnd : '',
+		notes: notes,
+		timestamp: Date.now()
+	  };
+	
+	  // Optimistically display on page immediately
+	  houseRecords.unshift(newRecord);
+	  renderDirectory();
+	  updateStats();
+	  showToast(`Awesome! ${addressVal} added. Saving...`, "🎃");
+	
+	  // Reset form inputs
+	  document.getElementById('signupForm').reset();
+	  document.querySelector('input[name="handingOut"][value="yes"]').checked = true;
+	  toggleTreatOptions(true);
+	
+	  // Send to Google Sheets via Apps Script
+	  try {
+		await fetch(SCRIPT_URL, {
+		  method: 'POST',
+		  mode: 'no-cors', // Google Apps Script requires no-cors from frontend browsers
+		  headers: { 'Content-Type': 'application/json' },
+		  body: JSON.stringify(newRecord)
+		});
+		showToast(`Saved to neighborhood treat map!`, "✅", "bg-orange-950 border-halloween-orange text-orange-200");
+	  } catch (err) {
+		console.error("Failed to save to Google Sheets:", err);
+		saveToLocalStorage(); // fallback backup
+	  }
+	}
 
     function saveToLocalStorage() {
       try {
@@ -446,69 +514,6 @@
       }
     }
 
-    function handleFormSubmit() {
-      const nameInput = document.getElementById('residentName');
-      const addressInput = document.getElementById('residentAddress');
-      const handingOutRadios = document.getElementsByName('handingOut');
-      let isHandingOut = true;
-      for (const r of handingOutRadios) {
-        if (r.checked) {
-          isHandingOut = (r.value === 'yes');
-          break;
-        }
-      }
-
-      const nameVal = nameInput.value.trim();
-      const addressVal = addressInput.value.trim();
-
-      if (!nameVal || !addressVal) {
-        showToast("Please provide both your name and address!", "⚠️", "bg-amber-800 text-amber-200 border-amber-600");
-        return;
-      }
-
-      // Collect checked categories
-      const categoryBoxes = document.querySelectorAll('input[name="treatCategory"]:checked');
-      const selectedCategories = Array.from(categoryBoxes).map(cb => cb.value);
-
-      const timeStart = document.getElementById('timeStart').value.trim();
-      const timeEnd = document.getElementById('timeEnd').value.trim();
-      const notes = document.getElementById('residentNotes').value.trim();
-
-      // Check if address already exists to allow update instead of duplicate
-      const existingIndex = houseRecords.findIndex(
-        h => h.address.toLowerCase().trim() === addressVal.toLowerCase().trim()
-      );
-
-      const newRecord = {
-        id: existingIndex >= 0 ? houseRecords[existingIndex].id : 'house-' + Date.now(),
-        name: nameVal,
-        address: addressVal,
-        handingOut: isHandingOut,
-        categories: isHandingOut ? selectedCategories : [],
-        timeStart: isHandingOut ? timeStart : '',
-        timeEnd: isHandingOut ? timeEnd : '',
-        notes: notes,
-        timestamp: Date.now()
-      };
-
-      if (existingIndex >= 0) {
-        houseRecords[existingIndex] = newRecord;
-        showToast(`Updated entry for ${addressVal}!`, "🔄", "bg-purple-900 border-purple-500 text-purple-200");
-      } else {
-        houseRecords.unshift(newRecord);
-        showToast(`Awesome! ${addressVal} added to the treat map.`, "🎃", "bg-orange-950 border-halloween-orange text-orange-200");
-      }
-
-      saveToLocalStorage();
-      renderDirectory();
-      updateStats();
-
-      // Reset form
-      document.getElementById('signupForm').reset();
-      // Ensure "Yes" is checked by default
-      document.querySelector('input[name="handingOut"][value="yes"]').checked = true;
-      toggleTreatOptions(true);
-    }
 
     function setFilter(type) {
       activeFilter = type;
