@@ -503,9 +503,18 @@
           return `<span class="inline-block text-[11px] px-2 py-0.5 rounded-md border ${style}">${cat}</span>`;
         }).join('');
 
-        let timeString = (house.timeStart || house.timeEnd) 
-          ? `🕒 ${house.timeStart || 'Dusk'} - ${house.timeEnd || 'Until lights out'}`
-          : '';
+		// Timing string
+		let start = formatTimeDisplay(house.timeStart);
+		let end = formatTimeDisplay(house.timeEnd);
+		let timeString = '';
+		
+		if (start && end) {
+		  timeString = `🕒 ${start} - ${end}`;
+		} else if (start) {
+		  timeString = `🕒 Starts around ${start}`;
+		} else if (end) {
+		  timeString = `🕒 Until approx. ${end}`;
+		}
 
         return `
           <div class="bg-halloween-card/85 rounded-2xl p-4 sm:p-5 border ${isHanding ? 'border-purple-900/50 hover:border-halloween-orange/50' : 'border-slate-800/80 opacity-75'} shadow-md transition-all duration-200">
@@ -610,6 +619,22 @@
     window.addEventListener('DOMContentLoaded', () => {
       initData();
     });
+    
+	function formatTimeDisplay(timeStr) {
+	  if (!timeStr) return '';
+	  const s = String(timeStr).trim();
+	
+	  // If it's an ISO timestamp from Google Sheets (e.g., 1899-12-30T...)
+	  if (s.includes('T') && s.includes('Z')) {
+		const d = new Date(s);
+		if (!isNaN(d.getTime())) {
+		  return d.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
+		}
+	  }
+	
+	  // If it's already clean like "6:00 PM" or "Dusk", return as-is
+	  return s;
+	}    
   </script>
 </body>
 </html>
