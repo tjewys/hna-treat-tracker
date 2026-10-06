@@ -292,9 +292,9 @@
             </div>
           </div>
 
-          <!-- Search Input & Quick Filters -->
-          <div class="grid grid-cols-1 sm:grid-cols-12 gap-3 pt-2">
-            <div class="sm:col-span-6 relative">
+          <!-- Search Input & Quick Filters (Clean Flex Layout, No Scrollbar) -->
+          <div class="flex flex-col md:flex-row items-stretch md:items-center gap-3 pt-2">
+            <div class="relative flex-1">
               <span class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-slate-400">🔍</span>
               <input 
                 type="text" 
@@ -305,7 +305,7 @@
               >
             </div>
 
-            <div class="sm:col-span-6 flex items-center gap-1.5 overflow-x-auto pb-1 sm:pb-0">
+            <div class="flex items-center flex-wrap gap-1.5">
               <button onclick="setFilter('all')" id="filterBtn-all" class="px-2.5 py-1.5 rounded-lg text-xs font-semibold bg-halloween-orange text-white shadow whitespace-nowrap transition cursor-pointer">All</button>
               <button onclick="setFilter('candy')" id="filterBtn-candy" class="px-2.5 py-1.5 rounded-lg text-xs font-medium bg-slate-800 text-slate-300 hover:text-white whitespace-nowrap transition cursor-pointer">🍬 Handing Out</button>
               <button onclick="setFilter('teal')" id="filterBtn-teal" class="px-2.5 py-1.5 rounded-lg text-xs font-medium bg-slate-800 text-slate-300 hover:text-white whitespace-nowrap transition cursor-pointer">🩵 Teal Pumpkin</button>
@@ -345,6 +345,20 @@
 
     let houseRecords = [];
     let activeFilter = 'all';
+
+    function formatTimeDisplay(timeStr) {
+      if (!timeStr) return '';
+      const s = String(timeStr).trim();
+
+      // Handle raw ISO timestamp strings from Google Sheets (e.g., 1899-12-30T...)
+      if (s.includes('T') && s.includes('Z')) {
+        const d = new Date(s);
+        if (!isNaN(d.getTime())) {
+          return d.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
+        }
+      }
+      return s;
+    }
 
     async function initData() {
       showToast("Syncing with neighborhood map...", "🎃");
@@ -503,18 +517,18 @@
           return `<span class="inline-block text-[11px] px-2 py-0.5 rounded-md border ${style}">${cat}</span>`;
         }).join('');
 
-		// Timing string
-		let start = formatTimeDisplay(house.timeStart);
-		let end = formatTimeDisplay(house.timeEnd);
-		let timeString = '';
-		
-		if (start && end) {
-		  timeString = `🕒 ${start} - ${end}`;
-		} else if (start) {
-		  timeString = `🕒 Starts around ${start}`;
-		} else if (end) {
-		  timeString = `🕒 Until approx. ${end}`;
-		}
+        // Timing string with auto-formatting
+        let start = formatTimeDisplay(house.timeStart);
+        let end = formatTimeDisplay(house.timeEnd);
+        let timeString = '';
+
+        if (start && end) {
+          timeString = `🕒 ${start} - ${end}`;
+        } else if (start) {
+          timeString = `🕒 Starts around ${start}`;
+        } else if (end) {
+          timeString = `🕒 Until approx. ${end}`;
+        }
 
         return `
           <div class="bg-halloween-card/85 rounded-2xl p-4 sm:p-5 border ${isHanding ? 'border-purple-900/50 hover:border-halloween-orange/50' : 'border-slate-800/80 opacity-75'} shadow-md transition-all duration-200">
@@ -555,7 +569,7 @@
 
     function exportToCSV() {
       if (houseRecords.length === 0) {
-        showToast("No records to export!", "⚠️️", "bg-amber-900 border-amber-600 text-amber-200");
+        showToast("No records to export!", "⚠️", "bg-amber-900 border-amber-600 text-amber-200");
         return;
       }
 
@@ -619,22 +633,6 @@
     window.addEventListener('DOMContentLoaded', () => {
       initData();
     });
-    
-	function formatTimeDisplay(timeStr) {
-	  if (!timeStr) return '';
-	  const s = String(timeStr).trim();
-	
-	  // If it's an ISO timestamp from Google Sheets (e.g., 1899-12-30T...)
-	  if (s.includes('T') && s.includes('Z')) {
-		const d = new Date(s);
-		if (!isNaN(d.getTime())) {
-		  return d.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
-		}
-	  }
-	
-	  // If it's already clean like "6:00 PM" or "Dusk", return as-is
-	  return s;
-	}    
   </script>
 </body>
 </html>
