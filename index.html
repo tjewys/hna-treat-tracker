@@ -292,24 +292,26 @@
             </div>
           </div>
 
-          <!-- Search Input & Quick Filters (Clean Flex Layout, No Scrollbar) -->
-          <div class="flex flex-col md:flex-row items-stretch md:items-center gap-3 pt-2">
-            <div class="relative flex-1">
+          <!-- Search Input & Quick Filters (Stacked Layout - No Horizontal Scrollbar) -->
+          <div class="space-y-3 pt-2">
+            <!-- Full Width Search -->
+            <div class="relative w-full">
               <span class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-slate-400">🔍</span>
               <input 
                 type="text" 
                 id="searchAddress" 
                 placeholder="Search street, house #, or family..." 
                 oninput="renderDirectory()"
-                class="w-full pl-9 pr-3 py-2 rounded-xl bg-slate-900/90 border border-slate-700 text-xs text-white placeholder-slate-500 focus:outline-none focus:ring-1 focus:ring-halloween-orange"
+                class="w-full pl-9 pr-3 py-2.5 rounded-xl bg-slate-900/90 border border-slate-700 text-xs text-white placeholder-slate-500 focus:outline-none focus:ring-1 focus:ring-halloween-orange"
               >
             </div>
 
-            <div class="flex items-center flex-wrap gap-1.5">
-              <button onclick="setFilter('all')" id="filterBtn-all" class="px-2.5 py-1.5 rounded-lg text-xs font-semibold bg-halloween-orange text-white shadow whitespace-nowrap transition cursor-pointer">All</button>
-              <button onclick="setFilter('candy')" id="filterBtn-candy" class="px-2.5 py-1.5 rounded-lg text-xs font-medium bg-slate-800 text-slate-300 hover:text-white whitespace-nowrap transition cursor-pointer">🍬 Handing Out</button>
-              <button onclick="setFilter('teal')" id="filterBtn-teal" class="px-2.5 py-1.5 rounded-lg text-xs font-medium bg-slate-800 text-slate-300 hover:text-white whitespace-nowrap transition cursor-pointer">🩵 Teal Pumpkin</button>
-              <button onclick="setFilter('notHanding')" id="filterBtn-notHanding" class="px-2.5 py-1.5 rounded-lg text-xs font-medium bg-slate-800 text-slate-300 hover:text-white whitespace-nowrap transition cursor-pointer">🌙 Off</button>
+            <!-- Filter Buttons: Wrap naturally, zero overflow -->
+            <div class="flex items-center flex-wrap gap-2">
+              <button onclick="setFilter('all')" id="filterBtn-all" class="px-3 py-1.5 rounded-xl text-xs font-semibold bg-halloween-orange text-white shadow whitespace-nowrap transition cursor-pointer">All</button>
+              <button onclick="setFilter('candy')" id="filterBtn-candy" class="px-3 py-1.5 rounded-xl text-xs font-medium bg-slate-800 text-slate-300 hover:text-white whitespace-nowrap transition cursor-pointer">🍬 Handing Out</button>
+              <button onclick="setFilter('teal')" id="filterBtn-teal" class="px-3 py-1.5 rounded-xl text-xs font-medium bg-slate-800 text-slate-300 hover:text-white whitespace-nowrap transition cursor-pointer">🩵 Teal Pumpkin</button>
+              <button onclick="setFilter('notHanding')" id="filterBtn-notHanding" class="px-3 py-1.5 rounded-xl text-xs font-medium bg-slate-800 text-slate-300 hover:text-white whitespace-nowrap transition cursor-pointer">🌙 Off</button>
             </div>
           </div>
         </div>
@@ -350,7 +352,7 @@
       if (!timeStr) return '';
       const s = String(timeStr).trim();
 
-      // Handle raw ISO timestamp strings from Google Sheets (e.g., 1899-12-30T...)
+      // Handle raw ISO timestamp strings from Google Sheets (e.g., 1899-12-30T...)[cite: 2]
       if (s.includes('T') && s.includes('Z')) {
         const d = new Date(s);
         if (!isNaN(d.getTime())) {
@@ -460,9 +462,9 @@
         const btn = document.getElementById(`filterBtn-${f}`);
         if (!btn) return;
         if (f === type) {
-          btn.className = "px-2.5 py-1.5 rounded-lg text-xs font-semibold bg-halloween-orange text-white shadow whitespace-nowrap transition cursor-pointer";
+          btn.className = "px-3 py-1.5 rounded-xl text-xs font-semibold bg-halloween-orange text-white shadow whitespace-nowrap transition cursor-pointer";
         } else {
-          btn.className = "px-2.5 py-1.5 rounded-lg text-xs font-medium bg-slate-800 text-slate-300 hover:text-white whitespace-nowrap transition cursor-pointer";
+          btn.className = "px-3 py-1.5 rounded-xl text-xs font-medium bg-slate-800 text-slate-300 hover:text-white whitespace-nowrap transition cursor-pointer";
         }
       });
       renderDirectory();
